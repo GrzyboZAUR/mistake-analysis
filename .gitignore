@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Raw data
+data/
+
+# Production files
+errors_combined.xlsx
+errors_combined.csv
+
+# Windows temp
+~$*
+*.tmp
