@@ -25,9 +25,9 @@ pdfmetrics.registerFont(TTFont("DejaVu-Bold", "C:/Windows/Fonts/arialbd.ttf"))
 
 # ============================================================
 # CHANGE THESE EACH MONTH
-MONTH = 3
-WEEK  = "11-14"
-YEAR  = 2026
+MONTH  = 4
+WEEK   = "14-18"
+YEAR   = 2026
 # ============================================================
 
 # --- LOAD DATA ---
@@ -92,8 +92,10 @@ details_table = analysis[analysis["day_type"] == "harvest_day"][
     ["date", "greenhouse", "kg", "error_count", "errors_per_unit"]
 ].copy()
 details_table["date"] = details_table["date"].dt.strftime("%d.%m.%Y")
+
 details_table.columns = ["Date", "Greenhouse", "Harvest Units", "Error Count", "Errors/100 Units"]
 details_table = details_table.sort_values(["Date", "Greenhouse"])
+
 
 # Top 3 people per week per greenhouse
 top_weekly = {}
