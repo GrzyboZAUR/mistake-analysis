@@ -32,8 +32,8 @@ pdfmetrics.registerFont(TTFont("DejaVu-Bold", "C:/Windows/Fonts/arialbd.ttf"))
 
 # ============================================================
 # CHANGE THESE EACH MONTH
-MONTH  = 3
-WEEK   = "11-14"
+MONTH  = 4
+WEEK   = "14-18"
 YEAR   = 2026
 # ============================================================
 
@@ -42,7 +42,7 @@ fin = pd.read_csv("errors_combined_anon.csv")
 fin["date"] = pd.to_datetime(fin["date"])
 
 
-harvest_raw = pd.read_excel("data/zbiory.xlsx")
+harvest_raw = pd.read_csv("harvest_normalized.csv")
 harvest_raw["data"] = pd.to_datetime(harvest_raw["data"])
 harvest = harvest_raw.melt(id_vars="data", var_name="greenhouse", value_name="kg")
 harvest["greenhouse"] = harvest["greenhouse"].str.replace("etap_", "Etap ", regex=False).str.title()
@@ -100,8 +100,7 @@ details_table = analysis[analysis["day_type"] == "harvest_day"][
     ["date", "greenhouse", "kg", "error_count", "errors_per_100kg"]
 ].copy()
 details_table["date"] = details_table["date"].dt.strftime("%d.%m.%Y")
-details_table["kg"] = details_table["kg"].round(0).astype(int)
-details_table.columns = ["Data", "Szklarnia", "Zbiór (kg)", "Liczba błędów", "Błędy/100kg"]
+details_table.columns = ["Data", "Szklarnia", "Jednostki zbioru", "Liczba błędów", "Błędy/10k jednostek"]
 details_table = details_table.sort_values(["Data", "Szklarnia"])
 
 # Top 3 people per week per greenhouse
