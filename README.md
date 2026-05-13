@@ -14,6 +14,7 @@ This project collects daily error reports from 6 greenhouses, normalizes and ano
 - PDF report generation with weekly and monthly breakdown
 
 ## Project Structure
+```
 mistake-analysis/
 ├── data/                      # Raw Excel files (gitignored)
 ├── reports/                   # Generated anonymized PDF reports
@@ -22,6 +23,7 @@ mistake-analysis/
 ├── process_errors.py          # Data processing + anonymization
 ├── report.py                  # PDF report generation
 └── README.md
+```
 
 ## How to Run
 
