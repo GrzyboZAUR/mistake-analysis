@@ -21,6 +21,18 @@ KNOWN_ERRORS = [
     "Brak odbicia rzędów",
     "Brak odbicia taga",
 ]
+ERROR_TRANSLATIONS = {
+    "Brak/błąd odbicia aktywności":                "Missing/incorrect activity scan",
+    "Brak/błąd odbicia początku pracy":            "Missing/incorrect start of work scan",
+    "Brak/błąd odbicia końca pracy":               "Missing/incorrect end of work scan",
+    "Brak/błąd odbicia przerwy":                   "Missing/incorrect break scan",
+    "Błąd odbicia na zbiorze":                     "Harvest scan error",
+    "Błąd odbicia na aktywności bez rzędów":       "Activity scan error - no rows assigned",
+    "Brak odbicia aktywności na koniec pracy":     "Missing end-of-day activity scan",
+    "Brak odbicia aktywności w trakcie dnia":      "Missing mid-day activity scan",
+    "Brak odbicia rzędów":                         "Missing row scan",
+    "Brak odbicia taga":                           "Missing tag scan",
+}
 
 # Exact match exceptions - handled before keyword detection
 EXCEPTIONS = {
@@ -247,6 +259,7 @@ final_anon["full_name"] = final_anon["full_name"].apply(anonymize)
 # --- NORMALIZE HARVEST DATA ---
 harvest_anon = pd.read_excel("data/zbiory.xlsx")
 harvest_anon["data"] = pd.to_datetime(harvest_anon["data"])
+final_anon["error"] = final_anon["error"].replace(ERROR_TRANSLATIONS)
 
 # Calculate mean per greenhouse and divide all values by it
 # This preserves relative patterns while hiding absolute numbers
