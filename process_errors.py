@@ -255,11 +255,11 @@ def anonymize(real_name: str) -> str:
 
 final_anon = final.copy()
 final_anon["full_name"] = final_anon["full_name"].apply(anonymize)
+final_anon["error"] = final_anon["error"].replace(ERROR_TRANSLATIONS)
 
 # --- NORMALIZE HARVEST DATA ---
 harvest_anon = pd.read_excel("data/zbiory.xlsx")
 harvest_anon["data"] = pd.to_datetime(harvest_anon["data"])
-final_anon["error"] = final_anon["error"].replace(ERROR_TRANSLATIONS)
 
 # Calculate mean per greenhouse and divide all values by it
 # This preserves relative patterns while hiding absolute numbers
