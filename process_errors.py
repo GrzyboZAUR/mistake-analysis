@@ -244,7 +244,22 @@ def anonymize(real_name: str) -> str:
 final_anon = final.copy()
 final_anon["full_name"] = final_anon["full_name"].apply(anonymize)
 
-# Save - anonymized version (for GitHub)
+# --- NORMALIZE HARVEST DATA ---
+harvest_anon = pd.read_excel("data/zbiory.xlsx")
+harvest_anon["data"] = pd.to_datetime(harvest_anon["data"])
+
+# Calculate mean per greenhouse and divide all values by it
+# This preserves relative patterns while hiding absolute numbers
+SCALE = 10000
+
+for col in ["etap_1", "etap_2", "etap_3", "etap_4", "etap_5", "etap_6"]:
+    mean_val = harvest_anon[col].replace(0, float("nan")).mean()
+    harvest_anon[col] = (harvest_anon[col] / mean_val * SCALE).round(1)
+
+harvest_anon.to_csv("harvest_normalized.csv", index=False, encoding="utf-8-sig")
+print("Saved! (normalized harvest)")
+
+# Save - anonymized version
 final_anon.to_excel("errors_combined_anon.xlsx", index=False)
 final_anon.to_csv("errors_combined_anon.csv", index=False, encoding="utf-8-sig")
 print("Saved! (anonymized version)")
