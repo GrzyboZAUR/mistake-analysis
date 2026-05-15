@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 import io
 import warnings
+import numpy as np
+from scipy import stats as scipy_stats
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from datetime import datetime
@@ -118,18 +120,127 @@ def generate_greenhouse_report(greenhouse: str):
     # Chart 1 - errors over time
     fig1, ax1 = plt.subplots(figsize=(12, 4))
     ax1.plot(analysis["date"], analysis["error_count"], marker="o", color="#2e75b6")
+    ax1.axhline(y=analysis["error_count"].mean(), color="tomato",
+                linestyle="--", alpha=0.7, label="Average")
     ax1.set_title(f"Error trend over time — {greenhouse}")
     ax1.set_ylabel("Number of errors")
+    ax1.legend()
     plt.xticks(rotation=45)
     plt.tight_layout()
     buf1 = fig_to_image(fig1)
     plt.close(fig1)
 
     # Chart 2 - errors vs harvest (scatter correlation)
+    scatter_data = analysis[analysis["day_type"] == "harvest_day"].copy()
+
+    # Calculate correlation
+    if len(scatter_data) > 2:
+        corr, p_value = scipy_stats.pearsonr(scatter_data["kg"], scatter_data["error_count"])
+    else:
+        corr, p_value = 0, 1
+
     fig2, ax2 = plt.subplots(figsize=(8, 5))
-    scatter_data = analysis[analysis["day_type"] == "harvest_day"]
     ax2.scatter(scatter_data["kg"], scatter_data["error_count"],
                 color="#2e75b6", alpha=0.7, edgecolors="white", s=80)
+    if len(scatter_data) > 2:
+        coeffs = np.polyfit(scatter_data["kg"], scatter_data["error_count"], 1)
+        trend = np.poly1d(coeffs)
+        x_line = np.linspace(scatter_data["kg"].min(), scatter_data["kg"].max(), 100)
+        ax2.plot(x_line, trend(x_line), color="tomato", linestyle="--",
+                 label=f"Trend (r = {corr:.2f})")
+        ax2.legend()
+    ax2.set_title(f"Errors vs harvest units — {greenhouse}")
+    ax2.set_xlabel("Harvest units (normalized)")
+    ax2.set_ylabel("Number of errors")
+    plt.tight_layout()
+    buf2 = fig_to_image(fig2)
+    plt.close(fig2)
+
+    # Chart 3 - error type distribution
+    fig3, ax3 = plt.subplots(figsize=(10, 5))
+    plot_errors = error_types.sort_values("Count")
+    ax3.barh(plot_errors["Error Type"], plot_errors["Count"], color="steelblue")
+    ax3.set_title(f"Error type distribution — {greenhouse}")
+    ax3.set_xlabel("Number of errors")
+    plt.tight_layout()
+    buf3 = fig_to_image(fig3)
+    plt.close(fig3)
+
+    # --- CORRELATION INTERPRETATION ---
+    def interpret_correlation(r, p):
+        """Generates plain-language interpretation of correlation for non-technical readers."""
+
+        # Significance check
+        if p > 0.05:
+            return (
+                "No clear relationship was found between harvest volume and number of errors. "
+                "This means that busy harvest days do not seem to cause more scanning mistakes "
+                "in this greenhouse. Other factors may be more important."
+            )
+
+        # Direction and strength
+        abs_r = abs(r)
+        if abs_r < 0.3:
+            strength = "weak"
+        elif abs_r < 0.6:
+            strength = "moderate"
+        else:
+            strength = "strong"
+
+        if r > 0:
+            direction = (
+                f"There is a {strength} positive relationship between harvest volume and errors "
+                f"(r = {r:.2f}). This means that on days when more was harvested, employees "
+                f"tended to make more scanning mistakes. "
+            )
+            if strength == "strong":
+                recommendation = (
+                    "This is worth attention — on the busiest days, the team may be rushing "
+                    "and skipping proper scanning procedures. Consider additional reminders "
+                    "or checks on high-volume days."
+                )
+            elif strength == "moderate":
+                recommendation = (
+                    "This pattern is noticeable but not definitive. It may be worth monitoring "
+                    "whether error rates increase on particularly busy days."
+                )
+            else:
+                recommendation = (
+                    "The relationship is weak, so harvest volume alone does not explain "
+                    "the errors. Other factors likely play a bigger role."
+                )
+        else:
+            direction = (
+                f"There is a {strength} negative relationship between harvest volume and errors "
+                f"(r = {r:.2f}). Interestingly, on days with higher harvest, fewer errors "
+                f"were recorded. "
+            )
+            if strength in ["strong", "moderate"]:
+                recommendation = (
+                    "This could mean that on busy harvest days the team is more focused "
+                    "and follows procedures more carefully, or that lighter days involve "
+                    "different types of work where scanning is less practiced."
+                )
+            else:
+                recommendation = (
+                    "The relationship is weak — harvest volume does not strongly explain "
+                    "error patterns in this greenhouse."
+                )
+
+        return direction + recommendation
+
+    correlation_text = interpret_correlation(corr, p_value)
+
+    # --- SECTION 1 stats ---
+    trend_stats = pd.DataFrame([{
+        "Metric": "Total errors", "Value": len(fin_g)},
+        {"Metric": "Days with reports", "Value": fin_g["date"].nunique()},
+        {"Metric": "Average errors/day", "Value": round(analysis["error_count"].mean(), 1)},
+        {"Metric": "Median errors/day", "Value": round(analysis["error_count"].median(), 1)},
+        {"Metric": "Min errors (single day)", "Value": int(analysis["error_count"].min())},
+        {"Metric": "Max errors (single day)", "Value": int(analysis["error_count"].max())},
+        {"Metric": "Std deviation", "Value": round(analysis["error_count"].std(), 2)},
+    ])
     # Trend line
     if len(scatter_data) > 2:
         z = pd.np if hasattr(pd, 'np') else __import__('numpy')
@@ -214,16 +325,23 @@ def generate_greenhouse_report(greenhouse: str):
 
     # Section 1 - Error trend
     story.append(Paragraph("1. Error trend over time", style_h1))
-    story.append(Image(buf1, width=width, height=width*0.4))
+    story.append(build_table(trend_stats, col_widths=[width * 0.6, width * 0.4]))
+    story.append(Spacer(1, 0.5 * cm))
+    story.append(Image(buf1, width=width, height=width * 0.4))
     story.append(PageBreak())
 
     # Section 2 - Errors vs harvest
     story.append(Paragraph("2. Errors vs harvest volume", style_h1))
-    story.append(Paragraph(
-        "Each point represents one day. The trend line shows whether higher harvest "
-        "volume correlates with more errors.", style_info))
-    story.append(Spacer(1, 0.3*cm))
-    story.append(Image(buf2, width=width, height=width*0.45))
+    story.append(Image(buf2, width=width, height=width * 0.45))
+    story.append(Spacer(1, 0.4 * cm))
+    story.append(Paragraph("What does this mean?", style_h2))
+    story.append(Paragraph(correlation_text, style_info))
+    story.append(Spacer(1, 0.3 * cm))
+    # Correlation value for reference
+    sig_text = f"Correlation coefficient: {corr:.2f} | p-value: {p_value:.3f}"
+    story.append(Paragraph(sig_text, ParagraphStyle("small", parent=styles["Normal"],
+                                                    fontName="DejaVu", fontSize=8,
+                                                    textColor=colors.grey, spaceAfter=4)))
     story.append(PageBreak())
 
     # Section 3 - Error type distribution
