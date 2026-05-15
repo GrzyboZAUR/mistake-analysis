@@ -22,6 +22,7 @@ mistake-analysis/
 ├── harvest_normalized.csv     # Normalized harvest index data
 ├── process_errors.py          # Data processing + anonymization
 ├── report.py                  # PDF report generation
+├── report_greenhouse.py       # PDF report generation per-greenhouse
 └── README.md
 ```
 
@@ -29,15 +30,16 @@ mistake-analysis/
 
 **Requirements:**
 ```bash
-pip install pandas matplotlib reportlab openpyxl
+pip install pandas matplotlib reportlab openpyxl numpy
 ```
+
 **Step 1 — Process raw data:**
 ```bash
 python process_errors.py
 ```
 Reads all `.xlsx` files from `data/`, normalizes errors, anonymizes names and outputs `errors_combined_anon.csv`.
 
-**Step 2 — Generate report:**
+**Step 2a — Generate monthly report:**
 
 Edit the variables at the top of `report.py`:
 ```python
@@ -50,6 +52,18 @@ Then run:
 python report.py
 ```
 Report is saved to `reports/report_errors_YYYY_MM.pdf`.
+
+**Step 2b — Generate per-greenhouse report:**
+
+Edit the variable at the top of `report_greenhouse.py`:
+```python
+TARGET_GREENHOUSE = None  # set to e.g. "Etap 1" for a single greenhouse
+```
+Then run:
+```bash
+python report_greenhouse.py
+```
+Generates one PDF per greenhouse in `reports/`.
 
 ## Technologies
 
