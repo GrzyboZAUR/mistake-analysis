@@ -73,4 +73,5 @@ Python · pandas · matplotlib · ReportLab · openpyxl
 Built as a portfolio project combining personal data, SQL, Python, and web development.
 
 Bartosz Grzybowski 
+
 https://www.linkedin.com/in/bartosz-grzybowski-5444732bb/
