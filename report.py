@@ -25,8 +25,8 @@ pdfmetrics.registerFont(TTFont("DejaVu-Bold", "C:/Windows/Fonts/arialbd.ttf"))
 
 # ============================================================
 # CHANGE THESE EACH MONTH
-MONTH  = 5
-WEEK   = "18-22"
+MONTH  = 6
+WEEK   = "23-27"
 YEAR   = 2026
 # ============================================================
 
