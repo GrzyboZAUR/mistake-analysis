@@ -68,3 +68,10 @@ Generates one PDF per greenhouse in `reports/`.
 ## Technologies
 
 Python · pandas · matplotlib · ReportLab · openpyxl
+
+## Author
+Built as a portfolio project combining personal data, SQL, Python, and web development.
+
+Bartosz Grzybowski 
+
+https://www.linkedin.com/in/bartosz-grzybowski-5444732bb/
