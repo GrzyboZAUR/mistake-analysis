@@ -17,6 +17,7 @@ This project collects daily error reports from 6 greenhouses, normalizes and ano
 ```
 mistake-analysis/
 ├── data/                      # Raw Excel files (gitignored)
+├── sample_data/               # Sample data and template Excel 
 ├── reports/                   # Generated anonymized PDF reports
 ├── errors_combined_anon.csv   # Anonymized error dataset
 ├── harvest_normalized.csv     # Normalized harvest index data
@@ -25,6 +26,11 @@ mistake-analysis/
 ├── report_greenhouse.py       # PDF report generation per-greenhouse
 └── README.md
 ```
+## Input File Format
+
+Before running the pipeline, place your daily error Excel files in the `data/` folder.  
+Each file must follow this naming convention:
+Błędy_YYYY-MM-DD.xlsx
 
 ## How to Run
 
@@ -33,13 +39,16 @@ mistake-analysis/
 pip install pandas matplotlib reportlab openpyxl numpy
 ```
 
-**Step 1 — Process raw data:**
+**Step 1 — Place your daily Excel files in data/ using the format above**
+
+**Step 2 — Process raw data:**
+
 ```bash
 python process_errors.py
 ```
 Reads all `.xlsx` files from `data/`, normalizes errors, anonymizes names and outputs `errors_combined_anon.csv`.
 
-**Step 2a — Generate monthly report:**
+**Step 3a — Generate monthly report:**
 
 Edit the variables at the top of `report.py`:
 ```python
@@ -53,7 +62,7 @@ python report.py
 ```
 Report is saved to `reports/report_errors_YYYY_MM.pdf`.
 
-**Step 2b — Generate per-greenhouse report:**
+**Step 3b — Generate per-greenhouse report:**
 
 Edit the variable at the top of `report_greenhouse.py`:
 ```python
