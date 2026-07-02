@@ -371,7 +371,7 @@ print("Saved! (anonymized version)")
 # --- NORMALIZE HARVEST DATA ---
 SCALE = 10000
 
-harvest_anon = pd.read_excel("data/zbiory.xlsx")
+harvest_anon = pd.read_excel("data/harvest.xlsx")
 harvest_anon["data"] = pd.to_datetime(harvest_anon["data"])
 
 for col in ["etap_1", "etap_2", "etap_3", "etap_4", "etap_5", "etap_6"]:
