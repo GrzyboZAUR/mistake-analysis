@@ -252,6 +252,10 @@ errors_combined.csv
 
 # Report PDFs from both seasons (anonymized data only)
 !s24-25/reports/
-!s24-25/reports/*.pdf
+!s24-25/reports/**
 !s25-26/reports/
-!s25-26/reports/*.pdf
+!s25-26/reports/**
+
+# Sample data for season 2024/25 (anonymized, for portfolio demo)
+!s24-25/sample_data/
+!s24-25/sample_data/**
