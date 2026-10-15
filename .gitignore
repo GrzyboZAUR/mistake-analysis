@@ -195,9 +195,9 @@ cython_debug/
 .abstra/
 
 # Visual Studio Code
-#   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
+#   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore
 #   that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
-#   and can be added to the global gitignore or merged into this file. However, if you prefer, 
+#   and can be added to the global gitignore or merged into this file. However, if you prefer,
 #   you could uncomment the following to ignore the entire vscode folder
 # .vscode/
 # Temporary file for partial code execution
@@ -217,8 +217,18 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Raw data
-data/
+# Raw data (all levels)
+**/data/
+**/output/
+**/reports/
+**/logs/
+
+# Any spreadsheet, CSV or PDF file (extra protection, all levels)
+*.xlsx
+*.xlsm
+*.xls
+*.csv
+*.pdf
 
 # Production files
 errors_combined.xlsx
@@ -227,3 +237,21 @@ errors_combined.csv
 # Windows temp
 ~$*
 *.tmp
+
+# --- Exceptions (allowed in repository) ---
+
+# Sample anonymized PDF reports for preview
+!docs/
+!docs/*.pdf
+
+# Season 2024/25 anonymized outputs kept in root
+!errors_combined_anon.csv
+!errors_combined_anon.xlsx
+!harvest_normalized.csv
+!unrecognized_errors.xlsx
+
+# Report PDFs from both seasons (anonymized data only)
+!s24-25/reports/
+!s24-25/reports/*.pdf
+!s25-26/reports/
+!s25-26/reports/*.pdf
