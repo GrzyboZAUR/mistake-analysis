@@ -33,15 +33,27 @@ Three main scripts:
 ## Project Structure
 ```
 mistake-analysis/
-├── s25-26/ # season 2025/2026
-│ ├── process_errors.py # step 1: process Excel files
-│ ├── report_engine.py # step 2: PDF generation engine
-│ ├── gui.py # step 2: GUI (Tkinter)
-│ ├── fonts/ # optional custom fonts (Carlito)
-│ ├── data/ # input Excel files (gitignored)
-│ ├── output/ # processed datasets (gitignored)
-│ ├── reports/ # generated PDF reports (gitignored)
-│ └── logs/ # run logs (gitignored)
+├── s24-25/                          # season 2024/2025
+│   ├── process_errors.py            # data processing + anonymization
+│   ├── report.py                    # PDF report generation
+│   ├── report_greenhouse.py         # PDF report per greenhouse
+│   ├── sample_data/                 # sample input templates
+│   ├── reports/                     # anonymized PDF reports
+│   ├── errors_combined_anon.csv     # anonymized error dataset
+│   ├── errors_combined_anon.xlsx
+│   ├── harvest_normalized.csv
+│   └── unrecognized_errors.xlsx
+│
+├── s25-26/                          # season 2025/2026
+│   ├── process_errors.py            # step 1: process Excel files
+│   ├── report_engine.py             # step 2: PDF generation engine
+│   ├── gui.py                       # step 2: GUI (Tkinter)
+│   ├── fonts/                       # optional custom fonts (Carlito)
+│   ├── data/                        # input Excel files (gitignored)
+│   ├── output/                      # processed datasets (gitignored)
+│   ├── reports/2026/                # generated PDF reports
+│   └── logs/                        # run logs (gitignored)
+│
 ├── requirements.txt
 ├── .gitignore
 └── README.md
